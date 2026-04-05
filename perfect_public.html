@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <title>نظام الذكاء الاصطناعي للنجاح الدراسي 🤖✨</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white; min-height: 100vh; text-align: center; padding: 20px;
+        }
+        @keyframes gradientBG { 0% {background-position: 0% 50%} 50% {background-position: 100% 50%} 100% {background-position: 0% 50%} }
+        .container { max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.15); border-radius: 30px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); backdrop-filter: blur(20px); }
+        h1 { font-size: clamp(28px, 5vw, 48px); margin-bottom: 20px; text-shadow: 0 4px 12px rgba(0,0,0,0.5); animation: glow 2s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 4px 12px rgba(0,0,0,0.5); } to { text-shadow: 0 0 30px rgba(255,255,255,0.8); } }
+        input { padding: 25px 30px; font-size: clamp(20px, 4vw, 28px); border: 3px solid rgba(255,255,255,0.3); border-radius: 25px; width: 100%; max-width: 350px; text-align: center; margin: 20px 0; background: rgba(255,255,255,0.2); color: white; transition: all 0.3s; }
+        input:focus { outline: none; border-color: #f39c12; box-shadow: 0 0 25px rgba(243,156,18,0.5); transform: scale(1.02); }
+        button { padding: 25px 60px; font-size: clamp(18px, 3vw, 24px); background: linear-gradient(45deg, #f39c12, #e67e22); color: white; border: none; border-radius: 25px; cursor: pointer; box-shadow: 0 10px 30px rgba(243,156,18,0.4); transition: all 0.3s; font-weight: bold; }
+        button:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(243,156,18,0.6); }
+        button:active { transform: translateY(-2px); }
+        #result { font-size: clamp(24px, 5vw, 40px); margin: 30px 0; padding: 30px; border-radius: 25px; font-weight: bold; opacity: 0; animation: fadeIn 0.8s ease forwards; min-height: 120px; display: flex; flex-direction: column; justify-content: center; }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+        .success { background: linear-gradient(45deg, #27ae60, #2ecc71); box-shadow: 0 10px 30px rgba(39,174,96,0.5); }
+        .fail { background: linear-gradient(45deg, #e74c3c, #c0392b); box-shadow: 0 10px 30px rgba(231,76,60,0.5); }
+        .prob { font-size: 0.7em; opacity: 0.9; margin-top: 10px; }
+        #history { margin-top: 40px; max-height: 300px; overflow-y: auto; text-align: right; }
+        .pred-item { background: rgba(255,255,255,0.2); margin: 10px; padding: 15px; border-radius: 15px; cursor: pointer; transition: all 0.3s; }
+        .pred-item:hover { background: rgba(255,255,255,0.3); transform: scale(1.02); }
+        #chart-container { margin-top: 30px; max-height: 300px; }
+        .share-btn { margin-top: 20px; padding: 15px 30px; background: #9b59b6; font-size: 16px; border-radius: 20px; }
+        .dark-mode { filter: invert(1) hue-rotate(180deg); }
+        @media (max-width: 600px) { .container { padding: 20px; margin: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 نظام الذكاء الاصطناعي للنجاح الدراسي ✨</h1>
+        <p style="font-size: clamp(16px, 3vw, 22px);">ادخل عدد ساعات الدراسة اليومية:</p>
+        <input type="number" id="hours" placeholder="مثال: 6.5 ساعات" min="0" step="0.1">
+        <br>
+        <button onclick="predict()">🧠 توقع بالذكاء الاصطناعي</button>
+        <div id="result"></div>
+        
+        <button class="share-btn" onclick="shareResult()">📤 مشاركة النتيجة</button>
+        <button class="share-btn" style="background: #34495e;" onclick="toggleDark()">🌙 وضع ليلي</button>
+        
+        <div id="chart-container">
+            <canvas id="probChart" width="400" height="200"></canvas>
+        </div>
+        
+        <div id="history">
+            <h3 style="margin-bottom: 20px;">📈 تاريخ التنبؤات</h3>
+        </div>
+    </div>
+
+    <script>
+        let predictions = JSON.parse(localStorage.getItem('predictions')) || [];
+        let chart = null;
+
+        function predict() {
+            const hours = parseFloat(document.getElementById('hours').value) || 0;
+            // محاكاة ML logistic regression بسيطة
+            const logit = -3 + 0.8 * hours; // weights من البيانات
+            const prob = 1 / (1 + Math.exp(-logit));
+            const pred = prob > 0.5 ? 1 : 0;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.animationDelay = '0.2s';
+            
+            if (pred === 1) {
+                resultDiv.innerHTML = `✅ <strong>ناجح بقوة!</strong><br><span class="prob">🧠 احتمال: ${(prob*100).toFixed(1)}% | ساعات: ${hours.toFixed(1)}</span>`;
+                resultDiv.className = 'success';
+            } else {
+                resultDiv.innerHTML = `❌ <strong>راسب!</strong><br><span class="prob">🧠 احتمال: ${(prob*100).toFixed(1)}% | ساعات: ${hours.toFixed(1)}<br>📈 زد الساعات للنجاح</span>`;
+                resultDiv.className = 'fail';
+            }
+            
+            // حفظ التاريخ
+            predictions.unshift({hours, pred, prob, time: new Date().toLocaleString('ar-SA')});
+            if (predictions.length > 10) predictions = predictions.slice(0,10);
+            localStorage.setItem('predictions', JSON.stringify(predictions));
+            updateHistory();
+            updateChart();
+        }
+
+        function updateHistory() {
+            const historyDiv = document.getElementById('history');
+            historyDiv.innerHTML = '<h3 style="margin-bottom: 20px;">📈 تاريخ التنبؤات (' + predictions.length + ')</h3>';
+            predictions.forEach((p, i) => {
+                const item = document.createElement('div');
+                item.className = `pred-item ${p.pred === 1 ? 'success' : 'fail'}`;
+                item.innerHTML = `<strong>${p.pred === 1 ? '✅ ناجح' : '❌ راسب'}</strong> | ${p.hours.toFixed(1)} ساعة | ${(p.prob*100).toFixed(1)}% | ${p.time}`;
+                item.onclick = () => { document.getElementById('hours').value = p.hours; predict(); };
+                historyDiv.appendChild(item);
+            });
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('probChart').getContext('2d');
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: predictions.map(p => p.hours.toFixed(1)),
+                    datasets: [{
+                        label: 'احتمال النجاح %',
+                        data: predictions.map(p => (p.prob*100).toFixed(1)),
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243,156,18,0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, max: 100 } },
+                    plugins: { legend: { labels: { color: 'white' } } }
+                }
+            });
+        }
+
+        function shareResult() {
+            const hours = document.getElementById('hours').value;
+            const text = `جرب نظام النجاح الدراسي! ${hours || ''} ساعات = ${document.getElementById('result').textContent}`;
+            navigator.share ? navigator.share({title: 'نظام النجاح', text, url: window.location.href}) : 
+                navigator.clipboard.writeText(text).then(() => alert('✅ النتيجة منسوخة!'));
+        }
+
+        function toggleDark() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // تحميل التاريخ عند البداية
+        updateHistory();
+        updateChart();
+        
+        // Enter key
+        document.getElementById('hours').addEventListener('keypress', e => { if (e.key === 'Enter') predict(); });
+    </script>
+</body>
+</html>

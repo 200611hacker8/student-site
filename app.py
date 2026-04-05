@@ -60,9 +60,15 @@ def home():
 
 @app.route('/predict')
 def predict():
-    hours = float(request.args.get('hours', 0))
+    try:
+        hours_str = request.args.get('hours', '')
+        hours = 0.0
+        if hours_str:
+            hours = float(hours_str)
+    except ValueError:
+        hours = 0.0
     pred = 1 if hours > 4 else 0
-    prob = min(1.0, hours / 10.0)  # Simple probability model
+    prob = min(1.0, hours / 10.0)
     return jsonify({'prediction': pred, 'probability': prob})
 
 if __name__ == '__main__':
