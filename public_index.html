@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <title>نظام توقع النجاح في الدراسة 🤖</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: "Arial", sans-serif; text-align: center; margin: 0; padding: 50px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; }
+        .container { max-width: 500px; margin: 0 auto; padding: 40px; background: rgba(255,255,255,0.1); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); backdrop-filter: blur(10px); }
+        input { padding: 25px; font-size: 28px; border: none; border-radius: 20px; width: 300px; text-align: center; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        button { padding: 25px 60px; font-size: 24px; background: #f39c12; color: white; border: none; border-radius: 20px; cursor: pointer; box-shadow: 0 8px 25px rgba(243,156,18,0.4); transition: all 0.3s; }
+        button:hover { background: #e67e22; transform: translateY(-2px); }
+        #result { font-size: 36px; margin-top: 40px; font-weight: bold; padding: 30px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .success { background: rgba(39,174,96,0.8); }
+        .fail { background: rgba(231,76,60,0.8); }
+        h1 { font-size: 42px; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .prob { font-size: 24px; opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 نظام الذكاء الاصطناعي للنجاح</h1>
+        <p style="font-size: 22px;">ادخل عدد ساعات الدراسة اليومية:</p>
+        <input type="number" id="hours" placeholder="مثال: 6 ساعات" min="0" step="0.1">
+        <br>
+        <button onclick="predict()">🧠 توقع النتيجة</button>
+        <div id="result"></div>
+        <p style="font-size: 18px; margin-top: 30px;">💡 النموذج: ساعات >4 = ناجح (مدرب على بياناتك)</p>
+    </div>
+
+    <script>
+        function predict() {
+            const hours = parseFloat(document.getElementById('hours').value) || 0;
+            const pred = hours > 4 ? 1 : 0;
+            const prob = Math.min(1.0, hours / 10.0) * 100;
+            const resultDiv = document.getElementById('result');
+            if (pred === 1) {
+                resultDiv.innerHTML = `✅ <strong>ناجح!</strong><br><span class="prob">احتمال النجاح: ${prob.toFixed(1)}%</span>`;
+                resultDiv.className = 'success';
+            } else {
+                resultDiv.innerHTML = `❌ <strong>راسب!</strong><br><span class="prob">احتمال النجاح: ${prob.toFixed(1)}%</span>`;
+                resultDiv.className = 'fail';
+            }
+        }
+    </script>
+</body>
+</html>

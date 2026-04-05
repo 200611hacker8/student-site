@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Prediction</title>
+</head>
+<body>
+
+<h2>Predict Student Result</h2>
+
+<input type="number" id="hours" placeholder="Enter study hours">
+<button onclick="predict()">Predict</button>
+
+<p id="result"></p>
+
+<script>
+function predict() {
+    let hours = document.getElementById("hours").value;
+
+    fetch("http://127.0.0.1:5000/predict?hours=" + hours)
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("result").innerText = 
+            "Result: " + data.result;
+    });
+}
+</script>
+
+</body>
+</html>
